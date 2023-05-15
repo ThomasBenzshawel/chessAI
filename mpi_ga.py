@@ -19,7 +19,6 @@ class Ecosystem():
         scoring_function must be a function which accepts an Organism as input and returns a float
         """
         self.population_size = population_size
-        self.final_results = []
 
         self.population = [organism_creator() for _ in range(population_size)]
         self.mating = mating
@@ -96,12 +95,12 @@ class Ecosystem():
         if rank > 0:
             comm.isend(local_results, dest=0, tag=14)  # send results to process 0
         else:
-            self.final_results = np.copy(local_results)  # initialize final results with results from process 0
+            final_results = np.copy(local_results)  # initialize final results with results from process 0
             for i in range(1, size):  # determine the size of the array to be received from each process
 
-                tmp = np.empty(len(self.final_results))  # create empty array to receive results
+                tmp = np.empty(len(final_results))  # create empty array to receive results
                 comm.irecv(tmp, source=i, tag=14)  # receive results from the process
-                final_results = np.hstack((self.final_results, tmp))  # add the received results to the final results
+                final_results = np.hstack((final_results, tmp))  # add the received results to the final results
 
                 # print("results")
                 #
@@ -159,7 +158,7 @@ organism_creator = lambda: Organism([7, 32, 32, 8, 1], output='relu')
 scoring_function = lambda organism_1, organism_2 : sim.simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1)
 ecosystem = Ecosystem(organism_creator, scoring_function, population_size=50, holdout=0.1, mating=True)
 
-generations = 10
+generations = 30
 best_ai_list = []
 best_ai_models = []
 
@@ -174,10 +173,7 @@ for i in range(generations):
     if rank == 0:
         print("Starting generation ", i + 1, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
-
-    while(len(ecosystem.final_results) != ecosystem.population_size):
-        print("population results len:", len(ecosystem.final_results))
-        ecosystem.mpi_generation()
+    ecosystem.mpi_generation()
 
     if rank == 0:
         best_ai = ecosystem.get_best_organism(repeats=1, include_reward=True)
