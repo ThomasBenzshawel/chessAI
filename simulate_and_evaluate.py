@@ -1,6 +1,6 @@
 import chess
 import numpy as np
-import pickle
+import dill
 import copy
 
 #Main file that does the sim and organism work
@@ -184,7 +184,7 @@ def quiesce(alpha, beta, board, organism=None):
     return alpha
 
 
-class Organism():
+class Organism:
     def __init__(self, dimensions, use_bias=True, output='softmax'):
         self.score = 0
 
@@ -291,8 +291,15 @@ class Organism():
                     file.write(str(connection) + ',')
         file.close()
 
-        def save(self, filepath):
-            pickle.dump(self)
+    def save(self, filepath):
+        with open(filepath, 'wb') as file:
+            dill.dump(self, file)
+
+    @staticmethod
+    def load(filepath):
+        with open(filepath, 'rb') as file:
+            organism = dill.load(file)
+        return organism
 
 def captured_piece(board, move, scale=10):
     piece = None
@@ -314,6 +321,8 @@ def captured_piece(board, move, scale=10):
             return 9 * scale
     else:
         return 0
+
+
 def simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1):
     board = chess.Board()
     
