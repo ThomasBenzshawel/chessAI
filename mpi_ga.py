@@ -181,4 +181,4 @@ for i in range(generations):
         best_ai_models.append(best_ai[0])
         best_ai_list.append(best_ai[1])
         print("Best AI = ", best_ai[1])
-        #ecosystem.get_best_organism().save("model.txt")
+        ecosystem.get_best_organism().save("model.pkl")
