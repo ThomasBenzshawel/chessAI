@@ -95,12 +95,12 @@ class Ecosystem():
         if rank > 0:
             comm.isend(local_results, dest=0, tag=14)  # send results to process 0
         else:
-            final_results = np.copy(local_results)  # initialize final results with results from process 0
+            self.final_results = np.copy(local_results)  # initialize final results with results from process 0
             for i in range(1, size):  # determine the size of the array to be received from each process
 
-                tmp = np.empty(len(final_results))  # create empty array to receive results
+                tmp = np.empty(len(self.final_results))  # create empty array to receive results
                 comm.irecv(tmp, source=i, tag=14)  # receive results from the process
-                final_results = np.hstack((final_results, tmp))  # add the received results to the final results
+                final_results = np.hstack((self.final_results, tmp))  # add the received results to the final results
 
                 # print("results")
                 #
@@ -174,7 +174,9 @@ for i in range(generations):
         print("Starting generation ", i + 1, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
 
-    ecosystem.mpi_generation()
+    while(len(ecosystem.final_results) != ecosystem.population_size):
+        print("population results len:", len(ecosystem.final_results))
+        ecosystem.mpi_generation()
 
     if rank == 0:
         best_ai = ecosystem.get_best_organism(repeats=1, include_reward=True)
