@@ -3,6 +3,8 @@ import numpy as np
 import pickle
 import copy
 
+#Main file that does the sim and organism work
+
 pawntable = [
     0, 0, 0, 0, 0, 0, 0, 0,
     5, 10, 10, -20, -20, 10, 10, 5,
