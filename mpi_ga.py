@@ -168,12 +168,12 @@ rank = comm.Get_rank()
 
 if rank == 0:
     print("Starting simulations")
-
-for i in range(generations):
+i = 0
+while i < generations:
     if rank == 0:
         print("Starting generation ", i + 1, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
-
+        i = i + 1
     ecosystem.mpi_generation()
 
     if rank == 0:
