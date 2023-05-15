@@ -174,6 +174,7 @@ while i < generations:
         print("Starting generation ", i + 1, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
         i = i + 1
+
     ecosystem.mpi_generation()
 
     if rank == 0:
