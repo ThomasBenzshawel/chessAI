@@ -19,6 +19,7 @@ class Ecosystem():
         scoring_function must be a function which accepts an Organism as input and returns a float
         """
         self.population_size = population_size
+        self.final_results = np.empty()
 
         self.population = [organism_creator() for _ in range(population_size)]
         self.mating = mating
