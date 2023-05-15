@@ -377,57 +377,64 @@ class Ecosystem():
 
         local_pop = population[start:stop]  # get the portion of the array to be analyzed by each rank
         # run the function for each parameter set and rank
-        local_results = np.array([self.scoring_function(x, y) for x, y in pairwise(local_pop)])
+        local_results = [self.scoring_function(x, y) for x, y in pairwise(local_pop)]
+        local_results = [item for sublist in local_results for item in sublist]
+
+        # Testing stuff
+        # print("Len of local pop: ", len(local_pop))
+        # print("Local results: ", local_results)
 
         if rank > 0:
-            comm.Send(local_results, dest=0, tag=14)  # send results to process 0
+            comm.isend(local_results, dest=0, tag=14)  # send results to process 0
         else:
             final_results = np.copy(local_results)  # initialize final results with results from process 0
             for i in range(1, size):  # determine the size of the array to be received from each process
-                if i < remainder:
-                    rank_size = count + 1
-                else:
-                    rank_size = count
-                tmp = np.empty(len(final_results),
-                               dtype=np.float)  # create empty array to receive results
-                comm.Recv(tmp, source=i, tag=14)  # receive results from the process
+
+                tmp = np.empty(len(final_results))  # create empty array to receive results
+                comm.irecv(tmp, source=i, tag=14)  # receive results from the process
                 final_results = np.hstack((final_results, tmp))  # add the received results to the final results
-            print("results")
 
-            # Saving the value pairings in self.rewards
-            # self.rewards = [item for sublist in final_results for item in sublist]
-            # print("#################")
-            # print(self.rewards, len(self.rewards))
+                # print("results")
+                #
+                # print(final_results)
 
-            self.rewards = [x.score for x in self.population]
+                # More testing
+                # Saving the value pairings in self.rewards
+                # self.rewards = [item for sublist in final_results for item in sublist]
+                # print("#################")
+                # print(self.rewards, len(self.rewards))
+                # print("results based on internal score")
 
-            print(self.rewards)
-            #todo this might run into issues with lining up the organism with its actual score with mpi
+                self.rewards = [x.score for x in self.population]
 
-            self.population = [self.population[x] for x in np.argsort(self.rewards)[::-1]]
-            self.population_size = len(self.population)
+                # print(self.rewards) testing some stuff again
+                #todo this might run into issues with lining up the organism with its actual score with mpi
 
-            #         self.population_new = [pop for pop in self.population if pop.winner]
+                self.population = [self.population[x] for x in np.argsort(self.rewards)[::-1]]
+                self.population_size = len(self.population)
 
-            #         if(len(self.population_new) > 2):
-            #             self.population = self.population_new
-            #             self.population_size = len(self.population)
+                # If we are murdering the ones that don't win, use this
+                #         self.population_new = [pop for pop in self.population if pop.winner]
 
-            new_population = []
-            for i in range(self.population_size):
-                parent_1_idx = i % self.holdout
-                # print(parent_1_idx)
+                #         if(len(self.population_new) > 2):
+                #             self.population = self.population_new
+                #             self.population_size = len(self.population)
 
-                if self.mating:
-                    parent_2_idx = min(self.population_size - 1, int(np.random.exponential(self.holdout)))
-                else:
-                    parent_2_idx = parent_1_idx
-                offspring = self.population[parent_1_idx].mate(self.population[parent_2_idx])
-                new_population.append(offspring)
-            if keep_best:
-                new_population[-1] = self.population[0]  # Ensure best organism survives
-            self.population = new_population
-            # return -1 * max(rewards)
+                new_population = []
+                for i in range(self.population_size):
+                    parent_1_idx = i % self.holdout
+                    # print(parent_1_idx)
+
+                    if self.mating:
+                        parent_2_idx = min(self.population_size - 1, int(np.random.exponential(self.holdout)))
+                    else:
+                        parent_2_idx = parent_1_idx
+                    offspring = self.population[parent_1_idx].mate(self.population[parent_2_idx])
+                    new_population.append(offspring)
+                if keep_best:
+                    new_population[-1] = self.population[0]  # Ensure best organism survives
+                self.population = new_population
+                # return -1 * max(rewards)
 
 
 
@@ -445,7 +452,7 @@ organism_creator = lambda: Organism([7, 32, 8, 1], output='relu')
 scoring_function = lambda organism_1, organism_2 : sim.simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1)
 ecosystem = Ecosystem(organism_creator, scoring_function, population_size=40, holdout=0.1, mating=True)
 
-generations = 30
+generations = 10
 best_ai_list = []
 best_ai_models = []
 
@@ -458,11 +465,14 @@ if rank == 0:
 
 for i in range(generations):
     if rank == 0:
-        print("Starting generation", i + 1)
+        print("Starting generation ", i + 1, " out of ", generations)
+        print("Population size is: ", ecosystem.population_size)
+
     ecosystem.mpi_generation()
+
     if rank == 0:
         best_ai = ecosystem.get_best_organism(repeats=1, include_reward=True)
         best_ai_models.append(best_ai[0])
-    #ecosystem.get_best_organism().save("model.txt")
-    #     best_ai_list.append(best_ai[1])
-    #     print("Best AI = ", best_ai[1])
+        best_ai_list.append(best_ai[1])
+        print("Best AI = ", best_ai[1])
+        #ecosystem.get_best_organism().save("model.txt")
