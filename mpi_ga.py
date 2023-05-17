@@ -153,7 +153,7 @@ class Ecosystem():
             return self.population[np.argsort(self.rewards)[-1]]
 
 
-organism_creator = lambda: Organism([7, 32, 8, 1], output='relu')
+organism_creator = lambda: Organism([7, 32, 32, 8, 1], output='relu')
 
 scoring_function = lambda organism_1, organism_2 : sim.simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1)
 ecosystem = Ecosystem(organism_creator, scoring_function, population_size=96, holdout=0.1, mating=True)
@@ -170,9 +170,9 @@ if rank == 0:
     print("Starting simulations")
 
 for i in range(generations):
-
-    print("Rank", rank, "Starting generation ", i + 1, " out of ", generations)
-    print("Population size is: ", ecosystem.population_size)
+    if rank == 0:
+        print("Rank", rank, "Starting generation ", i + 1, " out of ", generations)
+        print("Population size is: ", ecosystem.population_size)
 
     ecosystem.mpi_generation()
 
