@@ -171,7 +171,7 @@ if rank == 0:
 
 for i in range(generations):
     if rank == 0:
-        print("Rank", rank, "Starting generation ", i + 1, " out of ", generations)
+        print("Rank", rank, "Starting generation ", i, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
 
     ecosystem.mpi_generation()
@@ -182,3 +182,16 @@ for i in range(generations):
         best_ai_list.append(best_ai[1])
         print("Best AI = ", best_ai[1])
         ecosystem.get_best_organism().save("changed_rooks_and_depth3_model.pkl")
+
+        fig, ax = plt.subplots()
+        # Creating data
+        x = [i in range(len(best_ai_list))]
+        y = best_ai_list
+        # Plotting barchart
+        plt.plot(x, y)
+
+        ax.set(xlabel='Generation', ylabel='Total Points Collected',
+               title='Points Collected vs generations')
+        ax.grid()
+        # Saving the figure.
+        plt.savefig("output_gen_" + str(i) + ".jpg")
