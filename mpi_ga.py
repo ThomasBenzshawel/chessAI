@@ -170,8 +170,9 @@ if rank == 0:
     print("Starting simulations")
 
 for i in range(generations):
-    print("Rank", rank, "Starting generation ", i, " out of ", generations)
-    print("Population size is: ", ecosystem.population_size)
+    if rank -- 0:
+        print("Rank", rank, "Starting generation ", i, " out of ", generations)
+        print("Population size is: ", ecosystem.population_size)
 
     ecosystem.mpi_generation()
 
