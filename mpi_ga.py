@@ -170,7 +170,7 @@ if rank == 0:
     print("Starting simulations")
 
 for i in range(generations):
-    if rank -- 0:
+    if rank == 0:
         print("Rank", rank, "Starting generation ", i, " out of ", generations)
         print("Population size is: ", ecosystem.population_size)
 
