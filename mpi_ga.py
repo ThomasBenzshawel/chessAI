@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 from mpi4py import MPI
 import simulate_and_evaluate as sim
+import matplotlib.pyplot as plt
 from simulate_and_evaluate import Organism
 
 # Ecosystem and GA work
@@ -103,7 +104,6 @@ class Ecosystem():
                 final_results = np.hstack((final_results, tmp))  # add the received results to the final results
 
                 # print("results")
-                #
                 # print(final_results)
 
                 # More testing
@@ -153,10 +153,10 @@ class Ecosystem():
             return self.population[np.argsort(self.rewards)[-1]]
 
 
-organism_creator = lambda: Organism([7, 32, 32, 8, 1], output='relu')
+organism_creator = lambda: Organism([7, 32, 8, 1], output='relu')
 
 scoring_function = lambda organism_1, organism_2 : sim.simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1)
-ecosystem = Ecosystem(organism_creator, scoring_function, population_size=50, holdout=0.1, mating=True)
+ecosystem = Ecosystem(organism_creator, scoring_function, population_size=48, holdout=0.1, mating=True)
 
 generations = 15
 best_ai_list = []
@@ -170,9 +170,10 @@ if rank == 0:
     print("Starting simulations")
 
 for i in range(generations):
-    if rank == 0:
-        print("Starting generation ", i + 1, " out of ", generations)
-        print("Population size is: ", ecosystem.population_size)
+
+    print("Starting generation ", i + 1, " out of ", generations)
+    print("Population size is: ", ecosystem.population_size)
+
     ecosystem.mpi_generation()
 
     if rank == 0:
@@ -180,4 +181,4 @@ for i in range(generations):
         best_ai_models.append(best_ai[0])
         best_ai_list.append(best_ai[1])
         print("Best AI = ", best_ai[1])
-        ecosystem.get_best_organism().save("model.pkl")
+        ecosystem.get_best_organism().save("changed_rooks_and_depth2_model.pkl")

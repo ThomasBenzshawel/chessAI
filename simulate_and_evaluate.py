@@ -36,13 +36,13 @@ bishopstable = [
     -20, -10, -10, -10, -10, -10, -10, -20]
 
 rookstable = [
-    0, 0, 0, 5, 5, 0, 0, 0,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    -5, 0, 0, 0, 0, 0, 0, -5,
-    5, 10, 10, 10, 10, 10, 10, 5,
+    0, 0, 0, 10, 10, 0, 0, 0,
+    -5, 5, 5, 5, 5, 5, 5, -5,
+    -5, 5, 5, 5, 5, 5, 5, -5,
+    -5, 5, 5, 5, 5, 5, 5, -5,
+    -5, 5, 5, 5, 5, 5, 5, -5,
+    -5, 5, 5, 5, 5, 5, 5, -5,
+    10, 20, 20, 20, 20, 20, 20, 10,
     0, 0, 0, 0, 0, 0, 0, 0]
 
 queenstable = [
@@ -346,7 +346,7 @@ def simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1):
                 if(print_game):
                     print(f'\n{count}]\n')
                 #FIRST turn
-                move = selectmove(3, board, organism_1)
+                move = selectmove(2, board, organism_1)
                 total_points_player_1 = total_points_player_1 + move[1]
                 
                 total_points_player_1 = total_points_player_1 + captured_piece(board, move[0], scale=10)
@@ -362,7 +362,7 @@ def simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1):
             else:
                 #second turn
                 move = selectmove(3, board, organism_2)
-                total_points_player_2 = total_points_player_2 + -1 * move[1]
+                total_points_player_2 = total_points_player_2 + (-1 * move[1])
                 
                 total_points_player_2 = total_points_player_2 + captured_piece(board, move[0], scale=10)
                 
