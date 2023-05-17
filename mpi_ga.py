@@ -156,7 +156,7 @@ class Ecosystem():
 organism_creator = lambda: Organism([7, 32, 8, 1], output='relu')
 
 scoring_function = lambda organism_1, organism_2 : sim.simulate_and_evaluate(organism_1, organism_2, print_game=False, trials=1)
-ecosystem = Ecosystem(organism_creator, scoring_function, population_size=48, holdout=0.1, mating=True)
+ecosystem = Ecosystem(organism_creator, scoring_function, population_size=96, holdout=0.1, mating=True)
 
 generations = 15
 best_ai_list = []
