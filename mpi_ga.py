@@ -171,7 +171,7 @@ if rank == 0:
 
 for i in range(generations):
 
-    print("Starting generation ", i + 1, " out of ", generations)
+    print("Rank", rank, "Starting generation ", i + 1, " out of ", generations)
     print("Population size is: ", ecosystem.population_size)
 
     ecosystem.mpi_generation()
@@ -181,4 +181,4 @@ for i in range(generations):
         best_ai_models.append(best_ai[0])
         best_ai_list.append(best_ai[1])
         print("Best AI = ", best_ai[1])
-        ecosystem.get_best_organism().save("changed_rooks_and_depth2_model.pkl")
+        ecosystem.get_best_organism().save("changed_rooks_and_depth3_model.pkl")
