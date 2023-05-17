@@ -185,7 +185,7 @@ for i in range(generations):
 
         fig, ax = plt.subplots()
         # Creating data
-        x = [i in range(len(best_ai_list))]
+        x = [i for i in range(len(best_ai_list))]
         y = best_ai_list
         # Plotting barchart
         plt.plot(x, y)
