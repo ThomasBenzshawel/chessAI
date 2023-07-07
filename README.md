@@ -32,3 +32,4 @@ and type them into the bar like so: e2e4. This is read by the program as "e2 to 
 "simulate_and_evaluate.py" contains all Organism, neural network, and simulation logic
 
 "Intro_to_AI_NB.ipynb" contains an early version of the code without MPI logic
+Testing some repo stuff
